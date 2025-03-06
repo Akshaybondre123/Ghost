@@ -2,21 +2,22 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  output: "export", 
   experimental: {
-    appDir: true, // Enable Next.js app directory if using App Router
+    appDir: true,
   },
   webpack: (config) => {
-    config.cache = false; // Disable Webpack cache to avoid caching issues
+    config.cache = false;
     return config;
   },
   images: {
-    domains: ["your-image-domain.com"], // Add domains for optimized Next.js images
+    domains: ["your-image-domain.com"],
   },
   eslint: {
-    ignoreDuringBuilds: true, // Prevent ESLint errors from breaking production builds
+    ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: true, // Prevent TypeScript errors from blocking production builds
+    ignoreBuildErrors: true,
   },
 };
 
