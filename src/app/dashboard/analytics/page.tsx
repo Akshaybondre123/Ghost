@@ -1,5 +1,5 @@
-import { AnalyticsCards } from "@/components/analytics-cards"
-import { AnalyticsChart } from "@/components/analytics-chart"
+import { AnalyticsCards } from "../../../components/analytics-cards"
+import { AnalyticsChart } from "../../../components/analytics-chart"
 
 export default function AnalyticsPage() {
   return (
