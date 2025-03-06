@@ -20,7 +20,6 @@ export function LoginForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
  
   const searchParams = useSearchParams()
-// Create the Supabase client
   let supabase: any
   try {
     supabase = createClient()
@@ -29,6 +28,19 @@ export function LoginForm() {
   }
 
  
+ 
+  useEffect(() => {
+    // Initialize Supabase client only on the client-side
+    if (typeof window !== "undefined") {
+      try {
+        const client = createClient()
+        setSupabase(client)
+      } catch (error) {
+        console.error("Error creating Supabase client:", error)
+      }
+    }
+  }, [])
+
   useEffect(() => {
     const confirmed = searchParams.get("confirmed")
     const error = searchParams.get("error")
@@ -44,7 +56,7 @@ export function LoginForm() {
         description: "There was a problem with authentication. Please try again.",
       })
     }
-  }, [searchParams, toast])
+  }, [searchParams])
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -78,14 +90,12 @@ export function LoginForm() {
           description: "Welcome back!",
         })
 
-       
         console.log("Redirecting to dashboard...")
         window.location.replace("/dashboard")
       }
     } catch (error: any) {
       console.error("Error in login process:", error)
 
-     
       let errorMessage = "Invalid email or password. Please try again."
 
       if (error.message) {
@@ -94,40 +104,37 @@ export function LoginForm() {
         errorMessage = error.error_description
       }
 
-     
       if (error.message?.includes("Email not confirmed")) {
         errorMessage = "Please check your email and confirm your account before signing in."
       }
 
       toast("Login failed", {
         description: errorMessage,
-        style: { backgroundColor: "#F56565", color: "#FFF" }, 
+        style: { backgroundColor: "#F56565", color: "#FFF" },
       })
       setIsLoading(false)
     }
   }
 
   const handleGoogleLogin = async () => {
-   
-
     if (!supabase) {
       toast("Connection Error", {
         description:
           "Unable to connect to authentication service. Please check your internet connection and try again.",
-        style: { backgroundColor: "#F56565", color: "#FFF" }, 
+        style: { backgroundColor: "#F56565", color: "#FFF" },
       })
       return
     }
-    
 
     try {
       setIsGoogleLoading(true)
       console.log("Starting Google OAuth...")
 
+      const redirectTo = typeof window !== "undefined" ? window.location.origin : ""
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${redirectTo}/auth/callback`,
         },
       })
 
@@ -137,7 +144,6 @@ export function LoginForm() {
       }
 
       console.log("Google OAuth initiated:", data)
-      
     } catch (error: any) {
       console.error("Error in Google login:", error)
 
@@ -148,13 +154,11 @@ export function LoginForm() {
 
       toast("Google login failed", {
         description: errorMessage,
-        style: { backgroundColor: "#F56565", color: "#FFF" }, 
+        style: { backgroundColor: "#F56565", color: "#FFF" },
       })
       setIsGoogleLoading(false)
     }
   }
-
-  
   const isConfirmed = searchParams.get("confirmed") === "true"
 
   return (

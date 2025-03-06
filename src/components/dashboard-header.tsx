@@ -6,11 +6,12 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
   const greeting = () => {
-    const hour = new Date().getHours()
-    if (hour < 12) return "Good morning"
-    if (hour < 18) return "Good afternoon"
-    return "Good evening"
-  }
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    if (hour < 22) return "Good evening";
+    return "Good night";
+};
 
   const name = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Ghost"
 

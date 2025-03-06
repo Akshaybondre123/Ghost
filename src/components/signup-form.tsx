@@ -19,16 +19,16 @@ export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [signupSuccess, setSignupSuccess] = useState(false)
-  
 
-  
+  // Initialize Supabase client only on the client-side
   let supabase: any
-  try {
-    supabase = createClient()
-  } catch (error) {
-    console.error("Error creating Supabase client:", error)
+  if (typeof window !== "undefined") {
+    try {
+      supabase = createClient()
+    } catch (error) {
+      console.error("Error creating Supabase client:", error)
+    }
   }
-
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,12 +46,14 @@ export function SignUpForm() {
     try {
       console.log("Starting signup process...")
 
-      
+      // Validate password length
       if (password.length < 6) {
         throw new Error("Password must be at least 6 characters long")
       }
 
       
+      const origin = typeof window !== "undefined" ? window.location.origin : ""
+
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password: password.trim(),
@@ -59,7 +61,7 @@ export function SignUpForm() {
           data: {
             full_name: fullName.trim(),
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${origin}/auth/callback`,
         },
       })
 
@@ -70,35 +72,32 @@ export function SignUpForm() {
 
       console.log("Signup response:", signUpData)
 
-      
       if (signUpData?.user && signUpData?.session) {
-        
+       
         console.log("User created and signed in:", signUpData.user)
-      
+
         toast.success("Account created successfully!", {
           description: "Welcome to Ghost Dashboard.",
         })
-      
-       
+
         window.location.replace("/dashboard")
-      }else if (signUpData?.user) {
+      } else if (signUpData?.user) {
         
         console.log("User created, email confirmation required:", signUpData.user)
-      
+
         setSignupSuccess(true)
-      
+
         toast.info("Account created!", {
           description: "Please check your email to confirm your account before signing in.",
         })
-      
+
         setIsLoading(false)
-      }else {
+      } else {
         throw new Error("Something went wrong during signup")
       }
     } catch (error: any) {
       console.error("Error in signup process:", error)
 
-     
       let errorMessage = "Please try again."
 
       if (error.message) {
@@ -129,10 +128,13 @@ export function SignUpForm() {
       setIsGoogleLoading(true)
       console.log("Starting Google OAuth...")
 
+      // Get the origin only on the client-side
+      const origin = typeof window !== "undefined" ? window.location.origin : ""
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${origin}/auth/callback`,
         },
       })
 
@@ -142,7 +144,6 @@ export function SignUpForm() {
       }
 
       console.log("Google OAuth initiated:", data)
-      
     } catch (error: any) {
       console.error("Error in Google signup:", error)
 
@@ -150,14 +151,14 @@ export function SignUpForm() {
       if (error.message) {
         errorMessage = error.message
       }
-      
-     
+
       toast.error("Google sign-up failed", {
         description: errorMessage,
       })
       setIsGoogleLoading(false)
     }
   }
+
 
   if (signupSuccess) {
     return (

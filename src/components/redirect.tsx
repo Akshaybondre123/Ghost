@@ -10,10 +10,11 @@ export function Redirect({ to }: { to: string }) {
     
     router.push(to)
 
-    
-    setTimeout(() => {
-      window.location.href = to
-    }, 100)
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        window.location.href = to
+      }, 100)
+    }
   }, [router, to])
 
   return (

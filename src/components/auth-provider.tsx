@@ -1,12 +1,11 @@
-"use client"
+"use client" 
 
 import type React from "react"
-
 import { createContext, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import type { Session, User } from "@supabase/supabase-js"
-import { toast } from "sonner" 
+import { toast } from "sonner"
 
 type AuthContextType = {
   user: User | null
@@ -48,12 +47,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null)
       setIsLoading(false)
 
-      if (event === "SIGNED_IN" && window.location.pathname !== "/dashboard") {
-        console.log("Signed in, redirecting to dashboard")
-        window.location.replace("/dashboard")
-      } else if (event === "SIGNED_OUT") {
-        console.log("Signed out, redirecting to home")
-        window.location.replace("/")
+      // Ensure window is only accessed on the client-side
+      if (typeof window !== "undefined") {
+        if (event === "SIGNED_IN" && window.location.pathname !== "/dashboard") {
+          console.log("Signed in, redirecting to dashboard")
+          window.location.replace("/dashboard")
+        } else if (event === "SIGNED_OUT") {
+          console.log("Signed out, redirecting to home")
+          window.location.replace("/")
+        }
       }
     })
 
@@ -65,10 +67,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       await supabase.auth.signOut()
-      window.location.replace("/")
+      // Ensure window is only accessed on the client-side
+      if (typeof window !== "undefined") {
+        window.location.replace("/")
+      }
     } catch (error) {
       console.error("Error signing out:", error)
-      toast.error("There was a problem signing out. Please try again.") 
+      toast.error("There was a problem signing out. Please try again.")
     }
   }
 
