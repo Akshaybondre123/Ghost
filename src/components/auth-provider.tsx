@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client"
 import type { Session, User } from "@supabase/supabase-js"
 import { toast } from "sonner"
 
-type AuthContextType = {
+interface AuthContextType {
   user: User | null
   session: Session | null
   isLoading: boolean
@@ -47,14 +47,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null)
       setIsLoading(false)
 
-     
       if (typeof window !== "undefined") {
         if (event === "SIGNED_IN" && window.location.pathname !== "/dashboard") {
           console.log("Signed in, redirecting to dashboard")
-          window.location.replace("/dashboard")
+          router.push("/dashboard")
         } else if (event === "SIGNED_OUT") {
           console.log("Signed out, redirecting to home")
-          window.location.replace("/")
+          router.push("/")
         }
       }
     })
@@ -62,15 +61,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [supabase])
+  }, [supabase, router])
 
   const signOut = async () => {
     try {
       await supabase.auth.signOut()
-      
-      if (typeof window !== "undefined") {
-        window.location.replace("/")
-      }
+      router.push("/")
     } catch (error) {
       console.error("Error signing out:", error)
       toast.error("There was a problem signing out. Please try again.")

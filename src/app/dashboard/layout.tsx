@@ -1,26 +1,22 @@
-import type React from "react"
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
-import { DashboardNav } from "@/components/dashboard-nav"
-import { UserNav } from "@/components/user-nav"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { Redirect } from "@/components/redirect"
+import type React from "react";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { DashboardNav } from "@/components/dashboard-nav";
+import { UserNav } from "@/components/user-nav";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const supabase = createClient()
+  const supabase = createClient();
   const {
     data: { session },
-  } = await supabase.auth.getSession()
+  } = await supabase.auth.getSession();
 
   if (!session) {
-   
-    redirect("/")
-    
-    return <Redirect to="/" />
+    redirect("/"); 
   }
 
   return (
@@ -57,6 +53,5 @@ export default async function DashboardLayout({
         <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
-  )
+  );
 }
-

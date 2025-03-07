@@ -8,12 +8,20 @@ import { User } from "@supabase/supabase-js";
 
 export default function SettingsPage() {
   const [user, setUser] = useState<User | null>(null); 
-  const supabase = createClient();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const supabase = createClient(); 
     const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error) throw error;
+        setUser(data.user);
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchUser();
@@ -26,7 +34,7 @@ export default function SettingsPage() {
         <p className="text-sm text-gray-500">Manage your account settings and preferences.</p>
       </div>
       <Separator />
-      {user ? <ProfileForm user={user} /> : <p>Loading...</p>}
+      {loading ? <p>Loading...</p> : user ? <ProfileForm user={user} /> : <p>No user found.</p>}
     </div>
   );
 }

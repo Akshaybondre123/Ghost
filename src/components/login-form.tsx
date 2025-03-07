@@ -26,7 +26,7 @@ export function LoginForm() {
     if (typeof window !== "undefined") {
       try {
         const client = createClient()
-        setSupabase(client) // Update state with the Supabase client
+        setSupabase(client) 
       } catch (error) {
         console.error("Error creating Supabase client:", error)
       }

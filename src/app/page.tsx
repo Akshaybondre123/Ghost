@@ -1,17 +1,22 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
-import { LoginForm } from "@/components/login-form"
-import { DebugEnv } from "@/components/debug-env"
+export const dynamic = "force-dynamic";
+
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { LoginForm } from "@/components/login-form";
+import { DebugEnv } from "@/components/debug-env";
 
 export default async function Home() {
   try {
-    const supabase = createClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.getSession();
 
-    if (session) {
-      redirect("/dashboard")
+    if (error) {
+      console.error("Error fetching session:", error);
+    }
+
+    if (data?.session) {
+      redirect("/dashboard");
+      return null; 
     }
 
     return (
@@ -19,9 +24,9 @@ export default async function Home() {
         <LoginForm />
         <DebugEnv />
       </div>
-    )
+    );
   } catch (error) {
-    console.error("Error in home page:", error)
+    console.error("Unexpected error in Home component:", error);
 
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-background/80 p-4">
@@ -32,7 +37,6 @@ export default async function Home() {
         <LoginForm />
         <DebugEnv />
       </div>
-    )
+    );
   }
 }
-

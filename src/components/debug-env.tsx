@@ -1,45 +1,43 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function DebugEnv() {
-  const [showEnv, setShowEnv] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
 
   const envVars = {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || "Not set",
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "Set (hidden)" : "Not set",
-  }
+    SupabaseURL: process.env.NEXT_PUBLIC_SUPABASE_URL || "Not configured",
+    SupabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "Configured (hidden)" : "Not configured",
+  };
 
   return (
-    <Card className="w-full max-w-md mt-4">
+    <Card className="w-full max-w-md mt-6 shadow-md">
       <CardHeader>
-        <CardTitle>Environment Debug</CardTitle>
-        <CardDescription>Check if your environment variables are properly set</CardDescription>
+        <CardTitle>Environment Checker</CardTitle>
       </CardHeader>
       <CardContent>
-        {showEnv ? (
-          <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-2">
-              <div className="font-medium">NEXT_PUBLIC_SUPABASE_URL:</div>
-              <div className="font-mono text-sm">{envVars.NEXT_PUBLIC_SUPABASE_URL}</div>
+        {isVisible ? (
+          <div className="space-y-3 text-sm">
+            <div>
+              <span className="font-semibold">Supabase URL:</span>{" "}
+              <span className="font-mono text-gray-700">{envVars.SupabaseURL}</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="font-medium">NEXT_PUBLIC_SUPABASE_ANON_KEY:</div>
-              <div className="font-mono text-sm">{envVars.NEXT_PUBLIC_SUPABASE_ANON_KEY}</div>
+            <div>
+              <span className="font-semibold">Supabase Anon Key:</span>{" "}
+              <span className="font-mono text-gray-700">{envVars.SupabaseAnonKey}</span>
             </div>
           </div>
         ) : (
-          <p className="text-muted-foreground">Click the button below to check your environment variables.</p>
+          <p className="text-gray-500 text-sm">Click the button to check environment variables.</p>
         )}
       </CardContent>
       <CardFooter>
-        <Button onClick={() => setShowEnv(!showEnv)}>
-          {showEnv ? "Hide Environment Variables" : "Show Environment Variables"}
+        <Button onClick={() => setIsVisible(!isVisible)}>
+          {isVisible ? "Hide Details" : "Show Details"}
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
-

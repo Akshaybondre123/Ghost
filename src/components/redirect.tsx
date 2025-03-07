@@ -7,14 +7,7 @@ export function Redirect({ to }: { to: string }) {
   const router = useRouter()
 
   useEffect(() => {
-    
     router.push(to)
-
-    if (typeof window !== "undefined") {
-      setTimeout(() => {
-        window.location.href = to
-      }, 100)
-    }
   }, [router, to])
 
   return (
@@ -31,4 +24,3 @@ export function Redirect({ to }: { to: string }) {
     </div>
   )
 }
-

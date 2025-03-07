@@ -1,38 +1,42 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
-import { SignUpForm } from "@/components/signup-form"
-import { DebugEnv } from "../../components/debug-env"
+"use client"; 
 
-export default async function SignUp() {
-  try {
-    const supabase = createClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { SignUpForm } from "@/components/signup-form";
+import { DebugEnv } from "@/components/debug-env";
 
-    if (session) {
-      redirect("/dashboard")
-    }
+export default function SignUp() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-background/80 p-4">
-        <SignUpForm />
-        <DebugEnv />
-      </div>
-    )
-  } catch (error) {
-    console.error("Error in signup page:", error)
+  useEffect(() => {
+    const checkSession = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.getSession();
 
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-background/80 p-4">
-        <div className="w-full max-w-md text-center mb-8 text-red-500">
-          <h2 className="text-xl font-bold">Connection Error</h2>
-          <p>There was a problem connecting to the authentication service. Please check your environment variables.</p>
-        </div>
-        <SignUpForm />
-        <DebugEnv />
-      </div>
-    )
+      if (error) {
+        console.error("Error fetching session:", error);
+      }
+
+      if (data?.session) {
+        router.push("/dashboard"); 
+      } else {
+        setLoading(false); 
+      }
+    };
+
+    checkSession();
+  }, [router]);
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading...</p>;
   }
-}
 
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-background/80 p-4">
+      <SignUpForm />
+      <DebugEnv />
+    </div>
+  );
+}
