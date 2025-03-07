@@ -2,19 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // output: "export", 
-  experimental: {
-    appDir: true,
-  },
-  webpack: (config) => {
-    config.cache = false;
-    return config;
-  },
+  appDir: true, 
   images: {
-    domains: ["your-image-domain.com"],
+    domains: ["your-image-domain.com"], 
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true, 
   },
   typescript: {
     ignoreBuildErrors: true,

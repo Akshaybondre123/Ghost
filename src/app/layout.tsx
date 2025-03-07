@@ -24,7 +24,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <AuthProvider>
             {children}
-            <Toaster /> {/* ✅ Sonner's Toaster */}
+            <Toaster /> 
           </AuthProvider>
         </ThemeProvider>
       </body>

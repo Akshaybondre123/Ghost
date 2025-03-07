@@ -20,7 +20,6 @@ export function SignUpForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [signupSuccess, setSignupSuccess] = useState(false)
 
-  // Initialize Supabase client only on the client-side
   let supabase: any
   if (typeof window !== "undefined") {
     try {
@@ -46,7 +45,6 @@ export function SignUpForm() {
     try {
       console.log("Starting signup process...")
 
-      // Validate password length
       if (password.length < 6) {
         throw new Error("Password must be at least 6 characters long")
       }
@@ -128,7 +126,7 @@ export function SignUpForm() {
       setIsGoogleLoading(true)
       console.log("Starting Google OAuth...")
 
-      // Get the origin only on the client-side
+      
       const origin = typeof window !== "undefined" ? window.location.origin : ""
 
       const { data, error } = await supabase.auth.signInWithOAuth({

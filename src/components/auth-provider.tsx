@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null)
       setIsLoading(false)
 
-      // Ensure window is only accessed on the client-side
+     
       if (typeof window !== "undefined") {
         if (event === "SIGNED_IN" && window.location.pathname !== "/dashboard") {
           console.log("Signed in, redirecting to dashboard")
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       await supabase.auth.signOut()
-      // Ensure window is only accessed on the client-side
+      
       if (typeof window !== "undefined") {
         window.location.replace("/")
       }

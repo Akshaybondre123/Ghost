@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
@@ -18,29 +17,23 @@ export function LoginForm() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
- 
-  const searchParams = useSearchParams()
-  let supabase: any
-  try {
-    supabase = createClient()
-  } catch (error) {
-    console.error("Error creating Supabase client:", error)
-  }
+  const [supabase, setSupabase] = useState<any>(null) // Declare state for Supabase client
 
- 
- 
+  const searchParams = useSearchParams()
+
+  
   useEffect(() => {
-    // Initialize Supabase client only on the client-side
     if (typeof window !== "undefined") {
       try {
         const client = createClient()
-        setSupabase(client)
+        setSupabase(client) // Update state with the Supabase client
       } catch (error) {
         console.error("Error creating Supabase client:", error)
       }
     }
   }, [])
 
+  
   useEffect(() => {
     const confirmed = searchParams.get("confirmed")
     const error = searchParams.get("error")
@@ -159,6 +152,7 @@ export function LoginForm() {
       setIsGoogleLoading(false)
     }
   }
+
   const isConfirmed = searchParams.get("confirmed") === "true"
 
   return (
@@ -279,4 +273,3 @@ export function LoginForm() {
     </Card>
   )
 }
-
