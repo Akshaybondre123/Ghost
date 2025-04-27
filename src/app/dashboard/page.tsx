@@ -1,31 +1,27 @@
-import { redirect } from "next/navigation"
-import { DashboardCards } from "@/components/dashboard-cards"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { createClient } from "@/lib/supabase/server"
-import { Redirect } from "@/components/redirect"
+"use client";
 
-export default async function Dashboard() {
-  const supabase = createClient()
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+import { DashboardCards } from "@/components/dashboard-cards";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { useUser } from "@/lib/useUser"; // <--- use the client hook
 
-  if (!session) {
-    
-    redirect("/")
-   
-    return <Redirect to="/" />
+export default function Dashboard() {
+  const { user, loading } = useUser();
+
+  if (loading) {
+    return <div>Loading...</div>; // you can replace with spinner
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  if (!user) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-8">
       <DashboardHeader user={user} />
       <DashboardCards />
     </div>
-  )
+  );
 }
-
